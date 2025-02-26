@@ -57,6 +57,7 @@ dependencies {
     val lifecycle_version = "2.8.6"
     val arch_version = "2.2.0"
     val nav_version = "2.8.2"
+    val room_version = "2.6.1"
 
     // Views/Fragments integration
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
@@ -90,6 +91,25 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
     //mockwebserver
     testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+
+    //Room Dependencies
+
+    implementation("androidx.room:room-runtime:$room_version")
+
+    // If this project uses any Kotlin source, use Kotlin Symbol Processing (KSP)
+    // See Add the KSP plugin to your project
+    kapt("androidx.room:room-compiler:$room_version")
+
+    // If this project only uses Java source, use the Java annotationProcessor
+    // No additional plugins are necessary
+    annotationProcessor("androidx.room:room-compiler:$room_version")
+
+    // optional - Kotlin Extensions and Coroutines support for Room
+    implementation("androidx.room:room-ktx:$room_version")
+
+    // optional - Test helpers
+    testImplementation("androidx.room:room-testing:$room_version")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

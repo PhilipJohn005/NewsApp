@@ -3,6 +3,8 @@
     <style name="Base.Theme.NewsClientApp" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+        <item name="colorSecondary">@color/search_background</item>
     </style>
 
     <style name="Theme.NewsClientApp" parent="Base.Theme.NewsClientApp" />

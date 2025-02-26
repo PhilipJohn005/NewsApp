@@ -5,23 +5,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".NewsFragment"
-    android:background="@color/layout_background"
     android:orientation="vertical"
+    android:background="@android:color/white"
     >
 
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
+    <SearchView
+        android:id="@+id/svNews"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:visibility="invisible" />
+        android:layout_height="wrap_content"
+        android:background="@color/search_background" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvNews"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="visible"
         android:padding="5dp" >
-
     </androidx.recyclerview.widget.RecyclerView>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        tools:visibility="invisible" />
 </LinearLayout>

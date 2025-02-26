@@ -17,7 +17,7 @@ class NewsAPIServiceTest {
     private lateinit var server:MockWebServer
 
     @Before
-    fun setUp() { //method annotated with before runs before thr test
+    fun setUp() { //method annotated with before runs before the test
         server=MockWebServer()
         service=Retrofit.Builder()
             .baseUrl(server.url(""))

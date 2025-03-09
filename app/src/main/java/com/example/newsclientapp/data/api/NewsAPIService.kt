@@ -1,6 +1,5 @@
 package com.example.newsclientapp.data.api
 
-import android.icu.text.StringSearch
 import com.example.newsclientapp.BuildConfig
 import com.example.newsclientapp.data.model.APIResponse
 import com.example.newsclientapp.data.util.Resource

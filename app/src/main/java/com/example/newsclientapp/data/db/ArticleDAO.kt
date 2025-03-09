@@ -18,7 +18,5 @@ interface ArticleDAO {
     fun getAllArticles(): Flow<List<Article>>
 
     @Delete
-    suspend fun deleteArticle(article:Article){
-
-    }
+    suspend fun deleteArticle(article:Article)
 }

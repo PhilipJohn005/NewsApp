@@ -24,52 +24,67 @@ import kotlinx.coroutines.launch
 
 //to pass application context as argument for isNetworkAvailable we need to extend AndroidviewModel and not ViewModel
 class NewsViewModel(
-    val app:Application, //application context as argument
+    val app: Application,
     val getNewsHeadLineUseCase: GetNewsHeadLineUseCase,
-    val getSearchedNewsUseCase:GetSearchedNewsUseCase,
-    val saveNewsUseCase:SaveNewsUseCase,
+    val getSearchedNewsUseCase: GetSearchedNewsUseCase,
+    val saveNewsUseCase: SaveNewsUseCase,
     val getSavedNewsUseCase: GetSavedNewsUseCase,
     val deleteSavedNewsUseCase: DeleteSavedNewsUseCase
-    ): AndroidViewModel(app){
+) : AndroidViewModel(app) {
 
-    val newsHeadlines:MutableLiveData<Resource<APIResponse>> = MutableLiveData()
+    // LiveData for news headlines
+    val newsHeadlines: MutableLiveData<Resource<APIResponse>> = MutableLiveData()
 
-    fun getNewsHeadLines(country:String,page:Int)=viewModelScope.launch(Dispatchers.IO) {
-        Log.i("my","getNewsHeadLines")
+    // LiveData for searched news
+    val searchedNews: MutableLiveData<Resource<APIResponse>> = MutableLiveData()
+
+    // LiveData to store the current news list
+    val currentNewsList: MutableLiveData<List<Article>> = MutableLiveData()
+
+    // LiveData to store the current search query
+    val currentSearchQuery: MutableLiveData<String?> = MutableLiveData(null)
+
+    // Fetch news headlines
+    fun getNewsHeadLines(country: String, page: Int) = viewModelScope.launch(Dispatchers.IO) {
         newsHeadlines.postValue(Resource.Loading())
-
         try {
-            if (isNetworkAvailable(app)) {//to pass application context as argument for isNetworkAvailable we need to extend AndroidviewModel and not ViewModel
-                Log.i("my","Internet is Available")
-                val apiResult = getNewsHeadLineUseCase.execute(country,page)
+            if (isNetworkAvailable(app)) {
+                val apiResult = getNewsHeadLineUseCase.execute(country, page)
                 newsHeadlines.postValue(apiResult)
             } else {
-                Log.i("my","Internet is Not Available")
                 newsHeadlines.postValue(Resource.Error("Internet is Not Available"))
             }
-        }catch (e:Exception){
+        } catch (e: Exception) {
             newsHeadlines.postValue(Resource.Error(e.message.toString()))
         }
     }
 
+    // Search news
+    fun searchNews(country: String, searchQuery: String, page: Int) = viewModelScope.launch {
+        searchedNews.postValue(Resource.Loading())
+        try {
+            if (isNetworkAvailable(app)) {
+                val apiResult = getSearchedNewsUseCase.execute(country, searchQuery, page)
+                searchedNews.postValue(apiResult)
+            } else {
+                searchedNews.postValue(Resource.Error("Internet is Not Available"))
+            }
+        } catch (e: Exception) {
+            searchedNews.postValue(Resource.Error(e.message.toString()))
+        }
+    }
 
-
-    private fun isNetworkAvailable(context: Context?):Boolean{
+    // Check network availability
+    private fun isNetworkAvailable(context: Context?): Boolean {
         if (context == null) return false
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
             if (capabilities != null) {
                 when {
-                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
-                        return true
-                    }
-                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
-                        return true
-                    }
-                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> {
-                        return true
-                    }
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> return true
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> return true
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> return true
                 }
             }
         } else {
@@ -79,40 +94,20 @@ class NewsViewModel(
             }
         }
         return false
-
     }
 
-    //search
-
-    val searchedNews: MutableLiveData<Resource<APIResponse>> = MutableLiveData()
-
-    fun searchNews(country: String,searchQuery:String,page:Int)=viewModelScope.launch {
-        searchedNews.postValue(Resource.Loading())
-        try {
-            if(isNetworkAvailable(app)) {
-                val apiResult = getSearchedNewsUseCase.execute(country, searchQuery, page)
-                searchedNews.postValue(apiResult)
-            }else{
-                searchedNews.postValue(Resource.Error("Internet is Not Available"))
-            }
-        }catch (Exception:Exception){
-            searchedNews.postValue(Resource.Error(Exception.message.toString()))
-        }
-    }
-
-    //local data
-    fun saveArticle(article: Article)=viewModelScope.launch {
+    // Local data operations
+    fun saveArticle(article: Article) = viewModelScope.launch {
         saveNewsUseCase.execute(article)
     }
 
-    fun getSavedNews()= liveData {
-        getSavedNewsUseCase.execute().collect{
+    fun getSavedNews() = liveData {
+        getSavedNewsUseCase.execute().collect {
             emit(it)
         }
     }
 
-    fun deleteArticle(article: Article)=viewModelScope.launch {
+    fun deleteArticle(article: Article) = viewModelScope.launch {
         deleteSavedNewsUseCase.execute(article)
     }
 }
-

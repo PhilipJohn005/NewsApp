@@ -35,14 +35,12 @@ class SavedFragment : Fragment() {
         newsAdapter = (activity as MainActivity).newsAdapter
 
         newsAdapter.setOnItemClickListener {
-            val bundle=Bundle().apply {
-                putParcelable("selected_article",it)
+            val bundle = Bundle().apply {
+                putParcelable("selected_article", it)
             }
-            findNavController().navigate(
-                R.id.action_newsFragment_to_infoFragment,
-                bundle
-            )
+            findNavController().navigate(R.id.action_savedFragment_to_infoFragment, bundle)
         }
+
         initRecyclerView()
 
         viewModel.getSavedNews().observe(viewLifecycleOwner,{   //calling the get saved news
